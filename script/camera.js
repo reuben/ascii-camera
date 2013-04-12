@@ -30,7 +30,7 @@ var camera = (function() {
 				} else {
 					video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
 				}
-				
+
 				initCanvas();
 			}, options.onError);
 		} else {
@@ -56,15 +56,12 @@ var camera = (function() {
 
 	function startCapture() {
 		video.play();
-
-		renderTimer = setInterval(function() {
-			try {
+		video.addEventListener("canplaythrough", function() {
+			renderTimer = setInterval(function() {
 				context.drawImage(video, 0, 0, video.width, video.height);
 				options.onFrame(canvas);
-			} catch (e) {
-				// TODO
-			}
-		}, Math.round(1000 / options.fps));
+			}, Math.round(1000 / options.fps));
+		});
 	}
 
 	function stopCapture() {
