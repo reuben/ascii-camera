@@ -30,8 +30,8 @@ var camera = (function() {
 				} else {
 					video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
 				}
-				
-				initCanvas();
+
+				video.addEventListener("canplaythrough", initCanvas);
 			}, options.onError);
 		} else {
 			options.onNotSupported();
@@ -39,6 +39,7 @@ var camera = (function() {
 	}
 
 	function initCanvas() {
+		video.removeEventListener("canplaythrough", this);
 		canvas = options.targetCanvas || document.createElement("canvas");
 		canvas.setAttribute('width', options.width);
 		canvas.setAttribute('height', options.height);
@@ -58,12 +59,8 @@ var camera = (function() {
 		video.play();
 
 		renderTimer = setInterval(function() {
-			try {
-				context.drawImage(video, 0, 0, video.width, video.height);
-				options.onFrame(canvas);
-			} catch (e) {
-				// TODO
-			}
+			context.drawImage(video, 0, 0, video.width, video.height);
+			options.onFrame(canvas);
 		}, Math.round(1000 / options.fps));
 	}
 
